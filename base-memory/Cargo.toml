@@ -1,7 +1,11 @@
+[workspace]
+resolver = "2"
+members = []
 
 [package]
 name = "{{project-name}}"
 version = "0.0.0"
+authors = ["{{authors}}"]
 rust-version = "1.56.0"
 edition = "2021"
 description = "{{project-description}}"
@@ -13,9 +17,18 @@ license = "MIT OR Apache-2.0"
 
 [dependencies]
 {% if crate_bin %}
-
+anyhow = "1.0"
 {% endif %}
-# other general dependencies
+{% if crate_bin %}
+thiserror = "1.0"
+{% endif %}
+
+{% if rtm_git %}[patch.crates-io]
+rtm = { git = "https://github.com/rtm-rs/rtm", branch = "main" }
+{% endif %}
+
+[features]
+default = []
 
 {% if crate_bin %}
 [[lib]]
@@ -28,3 +41,11 @@ name = "{{crate_name}}"
 path = "src/main.rs"
 name = "{{crate_name}}-cli"
 {% endif %}
+
+# Enable only a small amount of optimization in debug mode
+[profile.dev]
+opt-level = 1
+
+# Enable high optimizations for dependencies (incl. RTM), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3

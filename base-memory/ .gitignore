@@ -2,6 +2,6 @@
 /target
 .cargo-ok
 .DS_Store
-{% if crate_lib %}
+{% if crate-lib %}
 Cargo.lock
 {% endif %}

@@ -1,6 +1,20 @@
 [template]
 cargo_generate_version = ">=0.10.0"
 
+[placeholders.async]
+type = "string"
+prompt = "Which sync runtime is used?"
+choices = [
+  "async-std",
+  "embassy",
+  "tokio",
+]
+default = "async-std"
+
+[placeholders.authors]
+type = "string"
+prompt = "Project authors?"
+
 [placeholders.crate-bin]
 ignore = [ "src/lib.rs" ]
 type = "bool"
@@ -17,6 +31,11 @@ default = true
 type = "string"
 prompt = "Project description?"
 
+[placeholders.fast-compiles]
+type = "bool"
+prompt = "Enable fast compiles for debug? (note: debug in vscode does not work!)"
+default = false
+
 [placeholders.gh-username]
 type = "string"
 prompt = "GitHub username (or organization)?"
@@ -24,25 +43,74 @@ prompt = "GitHub username (or organization)?"
 # this requirement is not captured by the regex at the moment.
 regex = "^[A-Za-z0-9][A-Za-z0-9-]{0,38}$"
 
+[placeholders.license]
+type = "string"
+prompt = "What license to use?"
+choices = ["MIT OR Apache 2.0", "MIT", "Apache 2.0"]
+default = "MIT OR Apache 2.0"
+
+[placeholders.rtm-es-memory]
+type = "bool"
+prompt = "Use memory Event Store for RTM?"
+default = false
+
+[placeholders.rtm-es-mysql]
+type = "bool"
+prompt = "Use MySQL Event Store for RTM?"
+default = false
+
+[placeholders.rtm-es-nats]
+type = "bool"
+prompt = "Use NATS Event Store for RTM?"
+default = false
+
+[placeholders.rtm-es-postgresql]
+type = "bool"
+prompt = "Use PostgreSQL Event Store for RTM?"
+default = false
+
 [placeholders.rtm-git]
 type = "bool"
 prompt = "Use git version of RTM?"
 default = false
 
-[placeholders.async]
-type = "string"
-prompt = "Which sync runtime is used?"
-choices = [
-  "async-std",
-  "embassy",
-  "tokio",
-]
-default = "async-std"
-
-[placeholders.fast-compiles]
+[placeholders.rtm-csv]
 type = "bool"
-prompt = "Enable fast compiles for debug? (note: debug in vscode does not work!)"
+prompt = "Use CSV storage adapter for RTM?"
+default = false
+
+[placeholders.rtm-http]
+type = "bool"
+prompt = "Use HTTP storage adapter for RTM?"
+default = false
+
+[placeholders.rtm-json]
+type = "bool"
+prompt = "Use JSON storage adapter for RTM?"
+default = false
+
+[placeholders.rtm-sql]
+type = "bool"
+prompt = "Use SQL storage adapter for RTM?"
+default = false
+
+[placeholders.rtm-yaml]
+type = "bool"
+prompt = "Use YAML storage adapter for RTM?"
 default = false
 
 [conditional.'fast-compiles == false']
 ignore = ["rust-toolchain.toml", ".cargo"]
+
+[conditional.'license == "MIT"']
+ignore = ["LICENSE-APACHE"]
+
+[conditional.'license == "APACHE"']
+ignore = ["LICENSE-MIT"]
+
+[conditional.'rtm-sql == true']
+[placeholders.sql-vendor]
+type = "string"
+prompt = "Which SQL vendor?"
+choices = ["MySQL", "PostgreSQL", "SQLite"]
+default = "SQLite"

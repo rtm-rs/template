@@ -1,0 +1,28 @@
+[template]
+cargo_generate_version = ">=0.10.0"
+
+[template]
+include = ["Cargo.toml"]
+
+[placeholders.crate_bin]
+ignore = [ "src/lib.rs" ]
+type = "bool"
+prompt = "Will this crate build a binary/executable?"
+default = true
+
+[placeholders.crate_lib]
+ignore = [ "src/main.rs" ]
+type = "bool"
+prompt = "Will this crate build a library?"
+default = true
+
+[placeholders.gh-username]
+type = "string"
+prompt = "GitHub username (or organization)?"
+# The username cannot end with a hyphen, too, but
+# this requirement is not captured by the regex at the moment.
+regex = "^[A-Za-z0-9][A-Za-z0-9-]{0,38}$"
+
+[placeholders.project-description]
+type = "string"
+prompt = "Project description?"

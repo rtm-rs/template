@@ -19,9 +19,12 @@ license = "MIT OR Apache-2.0"
 {% if crate-bin %}
 anyhow = "1.0"
 {% endif %}
-{% if crate-bin %}
+{% if crate-lib %}
 thiserror = "1.0"
 {% endif %}
+
+[dev-dependencies]
+criterion = { version = "0.3", features = ["html_reports"] }
 
 {% if rtm-git %}[patch.crates-io]
 rtm = { git = "https://github.com/rtm-rs/rtm", branch = "main" }

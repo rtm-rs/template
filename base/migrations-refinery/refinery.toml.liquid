@@ -1,0 +1,14 @@
+[main]
+{% if sql-vendor == "sqlite" %}
+db_type = "Sqlite"
+db_path = {{ db-path }}
+{% else %}
+{% if sql-vendor == "mysql" %}db_type = "Mysql"{% endif %}
+{% if sql-vendor == "postgresql" %}db_type = "Postgres"{% endif %}
+db_host = {{ db-host }}
+db_port = {{ db-port }}
+db_user = {{ db-user }}
+db_pass = {{ db-pass }}
+db_name = {{ db-name }}
+trust_cert = false
+{% endif %}

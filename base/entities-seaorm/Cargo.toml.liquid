@@ -1,0 +1,19 @@
+[package]
+name = "entities"
+version = "0.0.1"
+publish = false
+
+[dependencies.sea-orm]
+version = "^0.8.0"
+features = [
+  {% if async == "actix" and tls == "native-tls" %}"runtime-actix-native-tls",{% endif %}
+  {% if async == "async-std" and tls == "native-tls" %}"runtime-async-std-native-tls",{% endif %}
+  {% if async == "tokio" and tls == "native-tls" %}"runtime-tokio-native-tls",{% endif %}
+  {% if async == "actix" and tls == "rustls" %}"runtime-actix-rustls",{% endif %}
+  {% if async == "async-std" and tls == "rustls" %}"runtime-async-std-rustls",{% endif %}
+  {% if async == "tokio" and tls == "rustls" %}"runtime-tokio-rustls",{% endif %}
+  {% if mock %}"mock",{% endif %}
+  {% if sql-vendor == "mysql" %}"sqlx-mysql",{% endif %}
+  {% if sql-vendor == "postgresql" %}"sqlx-postgres",{% endif %}
+  {% if sql-vendor == "sqlite" %}"sqlx-sqlite",{% endif %}
+]

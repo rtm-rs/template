@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 set -e
 
+## Redo if the *.do files change
+#
+# Only guard *.do file two levels down. Exclude self.
+#
 SELF=$(basename "${0##*/}" .do)
 find . -maxdepth 2 -type f -name '*.do' -print0 | \
     xargs -0 echo | \

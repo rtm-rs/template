@@ -1,16 +1,6 @@
 [template]
 cargo_generate_version = ">=0.10.0"
 
-[placeholders.async]
-type = "string"
-prompt = "Which sync runtime is used?"
-choices = [
-  "async-std",
-  "embassy",
-  "tokio",
-]
-default = "async-std"
-
 [placeholders.authors]
 type = "string"
 prompt = "Project authors?"
@@ -54,10 +44,8 @@ type = "bool"
 prompt = "Use memory Event Store for RTM?"
 default = false
 
-[placeholders.rtm-es-mysql]
-type = "bool"
-prompt = "Use MySQL Event Store for RTM?"
-default = false
+mysql= "bool"
+mysqllt = false
 
 [placeholders.rtm-es-nats]
 type = "bool"
@@ -99,6 +87,42 @@ type = "bool"
 prompt = "Use YAML storage adapter for RTM?"
 default = false
 
+[placeholders.tls]
+type = "bool"
+prompt = "Use TLS?"
+default = false
+
+[placeholders.sql]
+type = "bool"
+prompt = "Use SQL storage?"
+default = false
+
+[conditional.'sql == true']
+sql-migrations = {type = "string",prompt = "Which SQL migration tool?",choices = ["Refinery", "SeaORM"],default = "Refinery"}
+sql-orm = {type = "string",prompt = "Which SQL ORM tool?",choices = ["SeaORM"],default = "SeaORM"}
+sql-vendor = {type = "string",prompt = "Which SQL vendor?",choices = ["mysql", "postgresql", "sqlite"],default = "sqlite",}
+db-host = {type = "string", prompt = "Database hostname", regex = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"}
+db-name = {type = "string", prompt = "Database name", regex = "^[a-zA-Z_][a-zA-Z0-9_]*$"}
+db-pass = {type = "string", prompt = "Database password - at least eight characters with at least one lower & upper case letter, digit and special character.", regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})$"}
+db-port = {type = "string", prompt = "Database port", regex = "^[0-9]+$"}
+db-schema = {type = "string", prompt = "Database schema", default = "rtm", regex = "^[a-zA-Z_][a-zA-Z0-9_]*$"}
+db-user = {type = "string", prompt = "Database username", regex = "^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$"}
+
+[conditional.'sql == false']
+ignore = ["entities-seaorm", "migrations-refinery", "migrations-seaorm",]
+
+[conditional.'sql-migrations == "Refinery"']
+rename = {migrations-refinery = "migrations"}
+
+[conditional.'sql-migrations == "SeaORM"']
+rename = {migrations-seaorm = "migrations"}
+
+[conditional.'sql-orm == "SeaORM"']
+rename = {entities-seaorm = "entities"}
+async = { type = "string", prompt = "Which async runtime?", choices = [ "actix", "async-std", "tokio", ], default = "async-std",}
+tls = { type = "string", prompt = "Which TLS crate?", choices = [ "native-tls", "Rustls", ], default = "rustls",}
+mock = {type = "bool", prompt = "Mock interface for unit testing?", default = true }
+
 [conditional.'fast-compiles == false']
 ignore = ["rust-toolchain.toml", ".cargo"]
 
@@ -107,10 +131,3 @@ ignore = ["LICENSE-APACHE"]
 
 [conditional.'license == "APACHE"']
 ignore = ["LICENSE-MIT"]
-
-[conditional.'rtm-sql == true']
-[placeholders.sql-vendor]
-type = "string"
-prompt = "Which SQL vendor?"
-choices = ["MySQL", "PostgreSQL", "SQLite"]
-default = "SQLite"

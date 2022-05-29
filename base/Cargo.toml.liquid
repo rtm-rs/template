@@ -1,6 +1,8 @@
 [workspace]
 resolver = "2"
-members = []
+members = ["entities",
+ "migrations",
+ "mtr"]
 
 [package]
 name = "{{project-name}}"
@@ -22,18 +24,26 @@ anyhow = "1.0"
 {% if crate-lib %}
 thiserror = "1.0"
 {% endif %}
+{% if !rtm-git %}
+rtm = "0"
+{% endif %}
 
-[dev-dependencies]
-criterion = { version = "0.3", features = ["html_reports"] }
+[dependencies.refinery]
+version = "0.8"
+{% if sql-lib %}
+features = ["postgres"]
 
 {% if rtm-git %}[patch.crates-io]
 rtm = { git = "https://github.com/rtm-rs/rtm", branch = "main" }
 {% endif %}
 
+[dev-dependencies]
+criterion = { version = "0.3", features = ["html_reports"] }
+
 [features]
 default = []
 
-{% if crate-bin %}
+{% if crate-lib %}
 [[lib]]
 path = "src/lib.rs"
 name = "{{crate_name}}"
@@ -42,7 +52,7 @@ name = "{{crate_name}}"
 {% if crate-bin %}
 [[bin]]
 path = "src/main.rs"
-name = "{{crate_name}}-cli"
+name = "{{crate_name}}-srv"
 {% endif %}
 
 # Enable only a small amount of optimization in debug mode

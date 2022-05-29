@@ -1,0 +1,20 @@
+[package]
+name = "migrations"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "migrations"
+path = "src/lib.rs"
+
+[dependencies]
+entities = { path = "../entities" }
+
+[dependencies.refinery]
+version = "^0.8.0"
+features = [
+  {% if sql-vendor == "mysql" %}"mysql", "flate2",{% endif %}
+  {% if sql-vendor == "postgresql" %}"postgres",{% endif %}
+  {% if sql-vendor == "sqlite" %}"rusqlite",{% endif %}
+]

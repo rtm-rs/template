@@ -1,5 +1,11 @@
 # Rust Type Mapper Templates
 
+Simple & flexiable:
+
+- [Git clone particular files](https://stackoverflow.com/a/52269934/152860)
+- [Gather user input for config file (see next item)](https://crates.io/crates/enquirer)
+- [Shell (bash) templating](https://stackoverflow.com/a/48633756/152860)
+
 RTM templates for: `cargo generate rtm-rs/template <name>`
 
 ## Usage

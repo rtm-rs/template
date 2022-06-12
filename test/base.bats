@@ -3,7 +3,7 @@ setup() {
   _common_setup
 }
 
-@test "Can run RTM generate script" {
-  run rtm-generate
+@test "Generate project from base template" {
+  run rtm-generate base
   assert_success
 }

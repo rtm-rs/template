@@ -40,7 +40,7 @@ function script_trap_err() {
     fi
 
     # Output debug data if in Cron mode
-    if [[ -n ${cron-} ]]; then
+    if [[ -n ${quiet-} ]]; then
         # Restore original file output descriptors
         if [[ -n ${script_output-} ]]; then
             exec 1>&3 2>&4
@@ -75,7 +75,7 @@ function script_trap_exit() {
     cd "$orig_cwd"
 
     # Remove Cron mode script log
-    if [[ -n ${cron-} && -f ${script_output-} ]]; then
+    if [[ -n ${quiet-} && -f ${script_output-} ]]; then
         rm "$script_output"
     fi
 
@@ -140,17 +140,18 @@ function script_init() {
     # Important to always set as we use it in the exit handler
     # shellcheck disable=SC2155
     readonly ta_none="$(tput sgr0 2> /dev/null || true)"
+    check_requirements
 }
 
 # DESC: Initialise colour variables
 # ARGS: None
 # OUTS: Read-only variables with ANSI control codes
-# NOTE: If --no-colour was set the variables will be empty. The output of the
+# NOTE: If --monochrome was set the variables will be empty. The output of the
 #       $ta_none variable after each tput is redundant during normal execution,
 #       but ensures the terminal output isn't mangled when running with xtrace.
 # shellcheck disable=SC2034,SC2155
 function colour_init() {
-    if [[ -z ${no_colour-} ]]; then
+    if [[ -z ${monochrome-} ]]; then
         # Text attributes
         readonly ta_bold="$(tput bold 2> /dev/null || true)"
         printf '%b' "$ta_none"
@@ -232,7 +233,7 @@ function colour_init() {
 # ARGS: None
 # OUTS: $script_output: Path to the file stdout & stderr was redirected to
 function cron_init() {
-    if [[ -n ${cron-} ]]; then
+    if [[ -n ${quiet-} ]]; then
         # Redirect all output to a temporary file
         script_output="$(mktemp --tmpdir "$script_name".XXXXX)"
         readonly script_output
@@ -276,7 +277,7 @@ function pretty_print() {
         script_exit 'Missing required argument to pretty_print()!' 2
     fi
 
-    if [[ -z ${no_colour-} ]]; then
+    if [[ -z ${monochrome-} ]]; then
         if [[ -n ${2-} ]]; then
             printf '%b' "$2"
         else
@@ -418,11 +419,42 @@ function run_as_root() {
 function script_usage() {
     cat << EOF
 Usage:
-     -h|--help                  Displays this help
-     -v|--verbose               Displays verbose output
-    -nc|--no-colour             Disables colour output
-    -cr|--cron                  Run silently unless we encounter an error
+     -h|--help          Display this help
+     -m|--monochrome    Disable colour output
+     -q|--quiet         Run silently unless an error occurs
+     -v|--verbose       Display verbose output
 EOF
+}
+
+# DESC: Generate from base template
+# ARGS: None
+# OUTS: None
+function generate_base() {
+    git clone "${RTM_TEMPLATE_URL}"
+}
+
+# DESC: Check requirements
+# ARGS: None
+# OUTS: None
+function check_requirements() {
+    # Has the user has pointed elsewhere?
+    if [[ ! -n ${RTM_TEMPLATE_URL-} ]]; then
+        export RTM_TEMPLATE_URL="https://github.com/rtm-rs/template.git"
+    fi
+    if [[ ! -n ${XDG_STATE_HOME-} ]]; then
+        export XDG_STATE_HOME="${HOME}/.local/state"
+    fi
+    if [[ ! -d "${XDG_STATE_HOME}" ]]; then
+        mkdir -p "${XDG_STATE_HOME}"
+    fi
+    if [[ -n ${RTM_SETUP-} ]]; then
+        return 0
+    fi
+    check_binary git
+    check_binary sed
+    # check_binary enquirer
+    export RTM_SETUP=true
+    touch "${XDG_STATE_HOME}/rtm_setup"
 }
 
 # DESC: Parameter parser
@@ -441,11 +473,14 @@ function parse_params() {
             -v | --verbose)
                 verbose=true
                 ;;
-            -nc | --no-colour)
-                no_colour=true
+            -m | --monochrome)
+                monochrome=true
                 ;;
-            -cr | --cron)
-                cron=true
+            -q | --quiet)
+                quiet=true
+                ;;
+            base)
+                generate_base
                 ;;
             *)
                 script_exit "Invalid parameter was provided: $param" 1

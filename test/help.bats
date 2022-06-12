@@ -11,8 +11,12 @@ setup() {
   PATH="$DIR/../scripts:$PATH"
 }
 
-@test "Can run RTM generate script" {
-  run rtm-generate
-  assert_success
-  # assert_output --partial "..."
+@test "RTM help" {
+  run rtm-generate --help
+  [ $status -eq 0 ]
+  [ "${lines[0]}" = "Usage:" ]
+  [ "${lines[1]}" = "     -h|--help                  Displays this help" ]
+  [ "${lines[2]}" = "     -v|--verbose               Displays verbose output" ]
+  [ "${lines[3]}" = "    -nc|--no-colour             Disables colour output" ]
+  [ "${lines[4]}" = "    -cr|--cron                  Run silently unless we encounter an error" ]
 }

@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-redo-ifchange test.bats
+find . -maxdepth 1 -type f -name '*.bats' -print0 | xargs --null redo-ifchange
 
-# pushd ./../
-./bats/bin/bats test.bats
-# popd
+find . -maxdepth 1 -type f -name '*.bats' -print0 | xargs --null ./bats/bin/bats

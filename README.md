@@ -1,6 +1,6 @@
 # Rust Type Mapper Templates
 
-Simple & flexiable:
+Simple & flexible:
 
 - [Git clone particular files](https://stackoverflow.com/a/52269934/152860)
 - [Gather user input for config file (see next item)](https://crates.io/crates/enquirer)

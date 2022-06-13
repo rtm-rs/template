@@ -33,7 +33,7 @@ mysqllt = false
 
 [placeholders.rtm-es-nats]
 type = "bool"
-prompt = "Use NATS Event Store for RTM?"
+prompt = "Use NATS-JetStream Event Store for RTM?"
 default = false
 
 [placeholders.rtm-es-postgresql]
@@ -44,31 +44,6 @@ default = false
 [placeholders.rtm-git]
 type = "bool"
 prompt = "Use git version of RTM?"
-default = false
-
-[placeholders.rtm-csv]
-type = "bool"
-prompt = "Use CSV storage adapter for RTM?"
-default = false
-
-[placeholders.rtm-http]
-type = "bool"
-prompt = "Use HTTP storage adapter for RTM?"
-default = false
-
-[placeholders.rtm-json]
-type = "bool"
-prompt = "Use JSON storage adapter for RTM?"
-default = false
-
-[placeholders.rtm-sql]
-type = "bool"
-prompt = "Use SQL storage adapter for RTM?"
-default = false
-
-[placeholders.rtm-yaml]
-type = "bool"
-prompt = "Use YAML storage adapter for RTM?"
 default = false
 
 [placeholders.tls]

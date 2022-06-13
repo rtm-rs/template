@@ -15,6 +15,7 @@ setup() {
   export RTM_TPL_AUTHORS=me
   export RTM_TPL_PARENT_DIR="$BATS_TMPDIR"
   export RTM_TPL_CRATE_TYPE="binary library"
+  export RTM_TPL_STORAGE_ADAPTERS='csv http json sql yaml'
 
   run rtm-generate --verbose --monochrome base
 
@@ -25,4 +26,5 @@ setup() {
   assert_output --partial "Project authors: me"
   assert_output --partial "Project parent directory: $BATS_TMPDIR"
   assert_output --partial "Crate type: binary library"
+  assert_output --partial "Storage adapters: csv http json sql yaml"
 }

@@ -23,3 +23,10 @@ setup() {
     get_crate_type
     [ "$RTM_TPL_CRATE_TYPE" = 'binary library' ]
 }
+
+@test "Get storage adapters from env" {
+    load rtm-generate
+    RTM_TPL_STORAGE_ADAPTERS='csv http json sql yaml'
+    get_storage_adapters
+    [ "$RTM_TPL_STORAGE_ADAPTERS" = 'csv http json sql yaml' ]
+}

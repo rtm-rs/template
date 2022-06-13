@@ -456,6 +456,18 @@ function get_crate_type() {
     verbose_print "Crate type: ${RTM_TPL_CRATE_TYPE}"
 }
 
+# DESC: Get storage adapter types
+# ARGS: None
+# OUTS: RTM_TPL_STORAGE_ADAPTERS with `binary library` or `binary` or
+#       `library` (default).
+function get_storage_adapters() {
+    if [[ -z ${RTM_TPL_STORAGE_ADAPTERS-} ]]; then
+        RTM_TPL_STORAGE_ADAPTERS=$(enquirer multi-select --cancel --default --selected 4 --message "Which storage adapters for RTM?" -- csv http json sql yaml)
+        export RTM_TPL_STORAGE_ADAPTERS
+    fi
+    verbose_print "Storage adapters: ${RTM_TPL_STORAGE_ADAPTERS}"
+}
+
 # DESC: Gather user input for base template
 # ARGS: None
 # OUTS: None
@@ -463,6 +475,7 @@ function gather_input_base(){
     get_parent_dir
     get_authors
     get_crate_type
+    get_storage_adapters
 }
 
 # DESC: Usage help

@@ -145,10 +145,10 @@ function script_init() {
     check_requirements
 }
 
-# DESC: Generic script deactivation
+# DESC: Generic script cleanup
 # ARGS: $@ (optional): Arguments provided to the script
 # OUTS: NONE
-function script_deactivate() {
+function script_cleanup() {
   true
 }
 
@@ -422,6 +422,23 @@ function run_as_root() {
     fi
 }
 
+# DESC: Gather user input for base template
+# ARGS: None
+# OUTS: None
+function gather_input_base(){
+    get_authors
+}
+
+# DESC: Get base project authors
+# ARGS: None
+# OUTS: None
+function get_authors() {
+    if [[ -z ${RTM_TPL_AUTHORS-} ]]; then
+        export RTM_TPL_AUTHORS=$(enquirer input --message "Project authors?" --default $USER)
+    fi
+}
+
+
 # DESC: Usage help
 # ARGS: None
 # OUTS: None
@@ -439,9 +456,16 @@ EOF
 # ARGS: None
 # OUTS: None
 function generate_base() {
-    RTM_TEMPLATE_DATA=$(mktemp --directory)
+    if [[ -z ${RTM_TEMPLATE_DATA-} ]]; then
+        RTM_TEMPLATE_DATA=$(mktemp --directory)
+        verbose_print "Created (RTM_TEMPLATE_DATA): ${RTM_TEMPLATE_DATA}"
+    fi
+    verbose_print "Using (RTM_TEMPLATE_DATA): ${RTM_TEMPLATE_DATA}"
     git clone "${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
+    gather_input_base
+    pushd "${RTM_TEMPLATE_DATA}"
 
+    popd
     rm -rf "${RTM_TEMPLATE_DATA}"
 }
 
@@ -464,7 +488,7 @@ function check_requirements() {
     fi
     check_binary git
     check_binary sed
-    # check_binary enquirer
+    check_binary enquirer
     export RTM_SETUP=true
     touch "${XDG_STATE_HOME}/rtm_setup"
 }

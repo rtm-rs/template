@@ -1,10 +1,6 @@
 [template]
 cargo_generate_version = ">=0.10.0"
 
-[placeholders.authors]
-type = "string"
-prompt = "Project authors?"
-
 [placeholders.crate-bin]
 ignore = [ "src/lib.rs" ]
 type = "bool"

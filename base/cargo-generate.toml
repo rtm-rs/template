@@ -35,19 +35,9 @@ type = "bool"
 prompt = "Use PostgreSQL Event Store for RTM?"
 default = false
 
-[placeholders.rtm-git]
-type = "bool"
-prompt = "Use git version of RTM?"
-default = false
-
 [placeholders.tls]
 type = "bool"
 prompt = "Use TLS?"
-default = false
-
-[placeholders.sql]
-type = "bool"
-prompt = "Use SQL storage?"
 default = false
 
 [conditional.'sql == true']
@@ -61,15 +51,6 @@ db-port = {type = "string", prompt = "Database port", regex = "^[0-9]+$"}
 db-schema = {type = "string", prompt = "Database schema", default = "rtm", regex = "^[a-zA-Z_][a-zA-Z0-9_]*$"}
 db-user = {type = "string", prompt = "Database username", regex = "^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$"}
 
-[conditional.'sql == false']
-ignore = ["entities-seaorm", "migrations-refinery", "migrations-seaorm",]
-
-[conditional.'sql-migrations == "Refinery"']
-rename = {migrations-refinery = "migrations"}
-
-[conditional.'sql-migrations == "SeaORM"']
-rename = {migrations-seaorm = "migrations"}
-
 [conditional.'sql-orm == "SeaORM"']
 rename = {entities-seaorm = "entities"}
 async = { type = "string", prompt = "Which async runtime?", choices = [ "actix", "async-std", "tokio", ], default = "async-std",}
@@ -78,9 +59,3 @@ mock = {type = "bool", prompt = "Mock interface for unit testing?", default = tr
 
 [conditional.'fast-compiles == false']
 ignore = ["rust-toolchain.toml", ".cargo"]
-
-[conditional.'license == "MIT"']
-ignore = ["LICENSE-APACHE"]
-
-[conditional.'license == "APACHE"']
-ignore = ["LICENSE-MIT"]

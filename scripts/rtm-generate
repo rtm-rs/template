@@ -422,6 +422,17 @@ function run_as_root() {
     fi
 }
 
+# DESC: Get RTM source
+# ARGS: None
+# OUTS: RTM_TPL_SOURCE with default crates.io.
+function get_source() {
+    if [[ -z ${RTM_TPL_SOURCE-} ]]; then
+        RTM_TPL_SOURCE=$(multi-select --cancel --default --selected 1 --message "Install RTM from?" -- crates.io github.com)
+        export RTM_TPL_SOURCE
+    fi
+    verbose_print "RTM source: ${RTM_TPL_SOURCE}"
+}
+
 # DESC: Get base project authors
 # ARGS: None
 # OUTS: RTM_TPL_AUTHORS with default $USER.

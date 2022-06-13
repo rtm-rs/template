@@ -3,6 +3,13 @@ setup() {
   _common_setup
 }
 
+@test "Get RTM install source from env" {
+    load rtm-generate
+    RTM_TPL_SOURCE='mit'
+    get_source
+    [ "$RTM_TPL_SOURCE" = 'mit' ]
+}
+
 @test "Get parent directory for the project from env" {
     load rtm-generate
     RTM_TPL_PARENT_DIR="$BATS_TMPDIR"

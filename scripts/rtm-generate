@@ -84,6 +84,8 @@ function script_trap_exit() {
         rmdir "$script_lock"
     fi
 
+    script_cleanup
+
     # Restore terminal colours
     printf '%b' "$ta_none"
 }
@@ -141,6 +143,13 @@ function script_init() {
     # shellcheck disable=SC2155
     readonly ta_none="$(tput sgr0 2> /dev/null || true)"
     check_requirements
+}
+
+# DESC: Generic script deactivation
+# ARGS: $@ (optional): Arguments provided to the script
+# OUTS: NONE
+function script_deactivate() {
+  true
 }
 
 # DESC: Initialise colour variables
@@ -430,10 +439,13 @@ EOF
 # ARGS: None
 # OUTS: None
 function generate_base() {
-    git clone "${RTM_TEMPLATE_URL}"
+    RTM_TEMPLATE_DATA=$(mktemp --directory)
+    git clone "${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
+
+    rm -rf "${RTM_TEMPLATE_DATA}"
 }
 
-# DESC: Check requirements
+# DESC: Check requirements once only
 # ARGS: None
 # OUTS: None
 function check_requirements() {

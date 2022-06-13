@@ -7,18 +7,48 @@ Simple & flexible:
 - [Shell (bash) templating](https://stackoverflow.com/a/48633756/152860)
 
 RTM templates for: `cargo generate rtm-rs/template <name>`
+## Install
+
+Requirements:
+
+- [`enquirer` (`cargo install enquirer`)](https://crates.io/crates/enquirer)
+- [`git`](https://git-scm.com)
+- [`sed](https://www.gnu.org/software/sed/)
+
+## Install
+
+```bash
+curl --location \
+     --remote-header-name \
+     --remote-name \
+     https://raw.githubusercontent.com/rtm/template/main/rtm-generate.run
+chmod +x rtm-generate.run
+./rtm-generator.run
+install rtm-generate
+rm rtm-generator.run
+```
+
+Alternatively, using wget
+
+```bash
+wget --no-check-certificate \
+     --content-disposition \
+     https://github.com/rtm/template/tarball/v0.7.1
+     https://raw.githubusercontent.com/rtm/template/main/rtm-generator.run
+chmod +x rtm-generate.run
+./rtm-generator.run
+install rtm-generate
+rm rtm-generator.run
+```
 
 ## Usage
 
-To setup a base CQRS-ES project with domains: `inventory`, `invoicing`,
+To setup a base RTM project with domains: `inventory`, `invoicing`,
 `ordering` and `shipping`
 
 ```bash
-cargo generate rtm-rs/template base-memory
-for d in inventory invoicing ordering shipping;
-do
-  mkdir $d
-  cd $d
-  cargo generate --init rtm-rs/template domain
-done
+rtm-generate rtm/template base
+# Default project name or the name you provided.
+cd rtm-project
+rtm-generate rtm/template base-domain
 ```

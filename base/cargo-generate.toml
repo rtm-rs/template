@@ -17,12 +17,6 @@ prompt = "GitHub username (or organization)?"
 # this requirement is not captured by the regex at the moment.
 regex = "^[A-Za-z0-9][A-Za-z0-9-]{0,38}$"
 
-[placeholders.license]
-type = "string"
-prompt = "What license to use?"
-choices = ["MIT OR Apache 2.0", "MIT", "Apache 2.0"]
-default = "MIT OR Apache 2.0"
-
 [placeholders.rtm-es-memory]
 type = "bool"
 prompt = "Use memory Event Store for RTM?"

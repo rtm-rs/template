@@ -458,14 +458,26 @@ function get_crate_type() {
 
 # DESC: Get storage adapter types
 # ARGS: None
-# OUTS: RTM_TPL_STORAGE_ADAPTERS with `binary library` or `binary` or
-#       `library` (default).
+# OUTS: RTM_TPL_STORAGE_ADAPTERS with `csv http json sql yaml` or a combination
+#       `sql` (default).
 function get_storage_adapters() {
     if [[ -z ${RTM_TPL_STORAGE_ADAPTERS-} ]]; then
         RTM_TPL_STORAGE_ADAPTERS=$(enquirer multi-select --cancel --default --selected 4 --message "Which storage adapters for RTM?" -- csv http json sql yaml)
         export RTM_TPL_STORAGE_ADAPTERS
     fi
     verbose_print "Storage adapters: ${RTM_TPL_STORAGE_ADAPTERS}"
+}
+
+# DESC: Get license types
+# ARGS: None
+# OUTS: RTM_TPL_LICENSES with `csv http json sql yaml` or a combination
+#       `mit apache2` (default).
+function get_licenses() {
+    if [[ -z ${RTM_TPL_LICENSES-} ]]; then
+        RTM_TPL_LICENSES=$(enquirer multi-select --cancel --default --selected 1 2 --message "Which licenses for RTM?" -- mit apache2)
+        export RTM_TPL_LICENSES
+    fi
+    verbose_print "Licenses: ${RTM_TPL_LICENSES}"
 }
 
 # DESC: Gather user input for base template
@@ -476,6 +488,7 @@ function gather_input_base(){
     get_authors
     get_crate_type
     get_storage_adapters
+    get_licenses
 }
 
 # DESC: Usage help

@@ -30,3 +30,10 @@ setup() {
     get_storage_adapters
     [ "$RTM_TPL_STORAGE_ADAPTERS" = 'csv http json sql yaml' ]
 }
+
+@test "Get licenses from env" {
+    load rtm-generate
+    RTM_TPL_LICENSES='mit'
+    get_licenses
+    [ "$RTM_TPL_LICENSES" = 'mit' ]
+}

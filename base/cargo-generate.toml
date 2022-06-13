@@ -35,11 +35,6 @@ type = "bool"
 prompt = "Use PostgreSQL Event Store for RTM?"
 default = false
 
-[placeholders.tls]
-type = "bool"
-prompt = "Use TLS?"
-default = false
-
 [conditional.'sql == true']
 sql-migrations = {type = "string",prompt = "Which SQL migration tool?",choices = ["Refinery", "SeaORM"],default = "Refinery"}
 sql-orm = {type = "string",prompt = "Which SQL ORM tool?",choices = ["SeaORM"],default = "SeaORM"}

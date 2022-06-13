@@ -14,10 +14,12 @@ setup() {
 # Here we provide non-default values to check they are passed through.
 @test "Generate base template project from environment" {
   export RTM_TPL_AUTHORS=me
-  export RTM_TPL_PARENT_DIR="$BATS_TMPDIR"
   export RTM_TPL_CRATE_TYPE="binary library"
-  export RTM_TPL_STORAGE_ADAPTERS='csv http json sql yaml'
   export RTM_TPL_LICENSES='mit'
+  export RTM_TPL_PARENT_DIR="$BATS_TMPDIR"
+  export RTM_TPL_SOURCE='github.com'
+  export RTM_TPL_STORAGE_ADAPTERS='csv http json sql yaml'
+  export RTM_TPL_TLS='rustls'
 
   run rtm-generate --verbose --monochrome base
 
@@ -30,4 +32,6 @@ setup() {
   assert_output --partial "Crate type: binary library"
   assert_output --partial "Storage adapters: csv http json sql yaml"
   assert_output --partial "Licenses: mit"
+  assert_output --partial "RTM install source: github.com"
+  assert_output --partial "Transport Layer Security (TLS): rustls"
 }

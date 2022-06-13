@@ -24,6 +24,13 @@ setup() {
     [ "$RTM_TPL_AUTHORS" = 'me' ]
 }
 
+@test "Get project licenses from env" {
+    load rtm-generate
+    RTM_TPL_LICENSES='mit'
+    get_licenses
+    [ "$RTM_TPL_LICENSES" = 'mit' ]
+}
+
 @test "Get crate type from env" {
     load rtm-generate
     RTM_TPL_CRATE_TYPE='binary library'
@@ -38,9 +45,9 @@ setup() {
     [ "$RTM_TPL_STORAGE_ADAPTERS" = 'csv http json sql yaml' ]
 }
 
-@test "Get licenses from env" {
+@test "Get Transport Layer Security (TLS) from env" {
     load rtm-generate
-    RTM_TPL_LICENSES='mit'
-    get_licenses
-    [ "$RTM_TPL_LICENSES" = 'mit' ]
+    RTM_TPL_TLS='rustls'
+    get_tls
+    [ "$RTM_TPL_TLS" = 'rustls' ]
 }

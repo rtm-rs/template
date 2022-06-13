@@ -32,6 +32,7 @@ rtm = "0"
 version = "0.8"
 {% if sql-lib %}
 features = ["postgres"]
+{% endif %}
 
 {% if rtm-git %}[patch.crates-io]
 rtm = { git = "https://github.com/rtm-rs/rtm", branch = "main" }

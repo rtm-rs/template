@@ -422,23 +422,12 @@ function run_as_root() {
     fi
 }
 
-# DESC: Get RTM source
-# ARGS: None
-# OUTS: RTM_TPL_SOURCE with default crates.io.
-function get_source() {
-    if [[ -z ${RTM_TPL_SOURCE-} ]]; then
-        RTM_TPL_SOURCE=$(multi-select --cancel --default --selected 1 --message "Install RTM from?" -- crates.io github.com)
-        export RTM_TPL_SOURCE
-    fi
-    verbose_print "RTM source: ${RTM_TPL_SOURCE}"
-}
-
 # DESC: Get base project authors
 # ARGS: None
 # OUTS: RTM_TPL_AUTHORS with default $USER.
 function get_authors() {
     if [[ -z ${RTM_TPL_AUTHORS-} ]]; then
-        RTM_TPL_AUTHORS=$(enquirer input --default $USER --message "Project authors?")
+        RTM_TPL_AUTHORS="$(enquirer input --default $USER --message 'Project authors?')"
         export RTM_TPL_AUTHORS
     fi
     verbose_print "Project authors: ${RTM_TPL_AUTHORS}"
@@ -449,7 +438,7 @@ function get_authors() {
 # OUTS: RTM_TPL_PARENT_DIR with default $(pwd).
 function get_parent_dir() {
     if [[ -z ${RTM_TPL_PARENT_DIR-} ]]; then
-        RTM_TPL_PARENT_DIR=$(enquirer input --default "$(pwd)" --message "Project parent folder?")
+        RTM_TPL_PARENT_DIR="$(enquirer input --default "$(pwd)" --message 'Project parent folder?')"
         export RTM_TPL_PARENT_DIR
     fi
     verbose_print "Project parent directory: ${RTM_TPL_PARENT_DIR}"
@@ -457,49 +446,56 @@ function get_parent_dir() {
 
 # DESC: Get crate type
 # ARGS: None
-# OUTS: RTM_TPL_CRATE_TYPE with `binary library` or `binary` or
-#       `library` (default).
+# OUTS: RTM_TPL_CRATE_TYPE one or more of `binary library` with
+#       `library` as default.
 function get_crate_type() {
     if [[ -z ${RTM_TPL_CRATE_TYPE-} ]]; then
-        RTM_TPL_CRATE_TYPE=$(enquirer multi-select --cancel --default --selected 2 --message "Will this crate build?" -- binary library)
+        RTM_TPL_CRATE_TYPE="$(enquirer multi-select --cancel --default --selected 2 --message 'Will this crate build?' -- binary library)"
         export RTM_TPL_CRATE_TYPE
     fi
     verbose_print "Crate type: ${RTM_TPL_CRATE_TYPE}"
 }
 
+# DESC: Get license types
+# ARGS: None
+# OUTS: RTM_TPL_LICENSES one or more of `mit apache2` with
+#       `mit apache2` as default.
+function get_licenses() {
+    if [[ -z ${RTM_TPL_LICENSES-} ]]; then
+        RTM_TPL_LICENSES="$(enquirer multi-select --cancel --default --selected 1 2 --message 'Which licenses for this project?' -- mit apache2)"
+        export RTM_TPL_LICENSES
+    fi
+    verbose_print "Licenses: ${RTM_TPL_LICENSES}"
+}
+
 # DESC: Get storage adapter types
 # ARGS: None
-# OUTS: RTM_TPL_STORAGE_ADAPTERS with `csv http json sql yaml` or a combination
-#       `sql` (default).
+# OUTS: RTM_TPL_STORAGE_ADAPTERS or more of `csv http json sql yaml` with
+#       `sql` as default.
 function get_storage_adapters() {
     if [[ -z ${RTM_TPL_STORAGE_ADAPTERS-} ]]; then
-        RTM_TPL_STORAGE_ADAPTERS=$(enquirer multi-select --cancel --default --selected 4 --message "Which storage adapters for RTM?" -- csv http json sql yaml)
+        RTM_TPL_STORAGE_ADAPTERS="$(enquirer multi-select --cancel --default --selected 4 --message 'Which storage adapters for this project?' -- csv http json sql yaml)"
         export RTM_TPL_STORAGE_ADAPTERS
     fi
     verbose_print "Storage adapters: ${RTM_TPL_STORAGE_ADAPTERS}"
 }
 
-# DESC: Get license types
-# ARGS: None
-# OUTS: RTM_TPL_LICENSES with `csv http json sql yaml` or a combination
-#       `mit apache2` (default).
-function get_licenses() {
-    if [[ -z ${RTM_TPL_LICENSES-} ]]; then
-        RTM_TPL_LICENSES=$(enquirer multi-select --cancel --default --selected 1 2 --message "Which licenses for RTM?" -- mit apache2)
-        export RTM_TPL_LICENSES
-    fi
-    verbose_print "Licenses: ${RTM_TPL_LICENSES}"
-}
+## See end of the script for these functions (VSCode issue #77675)
+#
+# get_source
+# get_tls
 
 # DESC: Gather user input for base template
 # ARGS: None
 # OUTS: None
 function gather_input_base(){
     get_parent_dir
+    get_source
     get_authors
+    get_licenses
     get_crate_type
     get_storage_adapters
-    get_licenses
+    get_tls
 }
 
 # DESC: Usage help
@@ -600,6 +596,36 @@ function main() {
     cron_init
     colour_init
     #lock_init system
+}
+
+## VS Code issue #77675
+#
+# The following function syntax (`enquirer select ...`) breaks VSCode syntax
+# highlighting.
+# Consequently, these functions should remain at the end of the script.
+#
+
+# DESC: Get RTM source
+# ARGS: None
+# OUTS: RTM_TPL_SOURCE one of `crates.io github.com` with crates.io as default.
+function get_source() {
+    if [[ -z ${RTM_TPL_SOURCE-} ]]
+    then
+        RTM_TPL_SOURCE="$(enquirer select --cancel --default --selected 1 --message 'Install RTM from?' -- crates.io github.com)"
+        export RTM_TPL_SOURCE
+    fi
+    verbose_print "RTM install source: ${RTM_TPL_SOURCE}"
+}
+
+# DESC: Get TLS
+# ARGS: None
+# OUTS: RTM_TPL_TLS one of `none native-tls rustls` with `none` as default.
+function get_tls() {
+    if [[ -z ${RTM_TPL_TLS-} ]]; then
+        RTM_TPL_TLS="$(enquirer select --cancel --default --selected 1 --message 'Which Transport Layer Security (TLS)?' -- none native-tls rustls)"
+        export RTM_TPL_TLS
+    fi
+    verbose_print "Transport Layer Security (TLS): ${RTM_TPL_TLS}"
 }
 
 # Invoke main with args if not sourced

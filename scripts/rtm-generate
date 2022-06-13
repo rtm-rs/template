@@ -424,20 +424,36 @@ function run_as_root() {
 
 # DESC: Get base project authors
 # ARGS: None
-# OUTS: None
+# OUTS: RTM_TPL_AUTHORS with default $USER.
 function get_authors() {
     if [[ -z ${RTM_TPL_AUTHORS-} ]]; then
-        export RTM_TPL_AUTHORS=$(enquirer input --message "Project authors?" --default $USER)
+        RTM_TPL_AUTHORS=$(enquirer input --default $USER --message "Project authors?")
+        export RTM_TPL_AUTHORS
     fi
+    verbose_print "Project authors: ${RTM_TPL_AUTHORS}"
 }
 
 # DESC: Get parent directory for the project
 # ARGS: None
-# OUTS: None
+# OUTS: RTM_TPL_PARENT_DIR with default $(pwd).
 function get_parent_dir() {
     if [[ -z ${RTM_TPL_PARENT_DIR-} ]]; then
-        export RTM_TPL_PARENT_DIR=$(enquirer input --message "Project parent folder?" --default "$(pwd)")
+        RTM_TPL_PARENT_DIR=$(enquirer input --default "$(pwd)" --message "Project parent folder?")
+        export RTM_TPL_PARENT_DIR
     fi
+    verbose_print "Project parent directory: ${RTM_TPL_PARENT_DIR}"
+}
+
+# DESC: Get crate type
+# ARGS: None
+# OUTS: RTM_TPL_CRATE_TYPE with `binary library` or `binary` or
+#       `library` (default).
+function get_crate_type() {
+    if [[ -z ${RTM_TPL_CRATE_TYPE-} ]]; then
+        RTM_TPL_CRATE_TYPE=$(enquirer multi-select --cancel --default --selected 2 --message "Will this crate build?" -- binary library)
+        export RTM_TPL_CRATE_TYPE
+    fi
+    verbose_print "Crate type: ${RTM_TPL_CRATE_TYPE}"
 }
 
 # DESC: Gather user input for base template
@@ -446,6 +462,7 @@ function get_parent_dir() {
 function gather_input_base(){
     get_parent_dir
     get_authors
+    get_crate_type
 }
 
 # DESC: Usage help

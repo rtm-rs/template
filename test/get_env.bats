@@ -16,3 +16,10 @@ setup() {
     get_authors
     [ "$RTM_TPL_AUTHORS" = 'me' ]
 }
+
+@test "Get crate type from env" {
+    load rtm-generate
+    RTM_TPL_CRATE_TYPE='binary library'
+    get_crate_type
+    [ "$RTM_TPL_CRATE_TYPE" = 'binary library' ]
+}

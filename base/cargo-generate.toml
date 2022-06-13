@@ -1,18 +1,6 @@
 [template]
 cargo_generate_version = ">=0.10.0"
 
-[placeholders.crate-bin]
-ignore = [ "src/lib.rs" ]
-type = "bool"
-prompt = "Will this crate build a binary/executable?"
-default = true
-
-[placeholders.crate-lib]
-ignore = [ "src/main.rs" ]
-type = "bool"
-prompt = "Will this crate build a library?"
-default = true
-
 [placeholders.description]
 type = "string"
 prompt = "Project description?"

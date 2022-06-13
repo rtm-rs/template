@@ -54,5 +54,10 @@ rtm-generate rtm/template base-domain
 
 ## Variables
 
-- `RTM_TPL_PROJECT`: The name of the project.  Default: mtr
-- `RTM_TPL_AUTHORS`: The project authors. Default $USER
+If these environment variables are set the user will not be prompted to input
+the related data.
+
+- `RTM_TPL_AUTHORS`: The project authors. Default: `$USER`
+- `RTM_TPL_CRATE_TYPE`: The crate type.  Default: `library`
+- `RTM_TPL_PARENT_DIR`: The project parent directory.  Default: `$(pwd)`
+- `RTM_TPL_PROJECT`: The name of the project.  Default: `mtr`

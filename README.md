@@ -7,6 +7,7 @@ Simple & flexible:
 - [Shell (bash) templating](https://stackoverflow.com/a/48633756/152860)
 
 RTM templates for: `cargo generate rtm-rs/template <name>`
+
 ## Install
 
 Requirements:
@@ -14,8 +15,6 @@ Requirements:
 - [`enquirer` (`cargo install enquirer`)](https://crates.io/crates/enquirer)
 - [`git`](https://git-scm.com)
 - [`sed](https://www.gnu.org/software/sed/)
-
-## Install
 
 ```bash
 curl --location \
@@ -52,3 +51,8 @@ rtm-generate rtm/template base
 cd rtm-project
 rtm-generate rtm/template base-domain
 ```
+
+## Variables
+
+- `RTM_TPL_PROJECT`: The name of the project.  Default: mtr
+- `RTM_TPL_AUTHORS`: The project authors. Default $USER

@@ -8,12 +8,17 @@ setup() {
   assert_success
   assert_output --partial "Using (RTM_TEMPLATE_DATA):"
   assert_dir_not_exists "${RTM_TEMPLATE_DATA}"
+  assert_dir_exists "$(pwd)"
 }
 
 @test "Generate base template project from environment" {
-  run rtm-generate --verbose --monochrome base <<< 'y'
-  # run enquirer input --message "Project authors?" <<< 'me'
+  RTM_TPL_AUTHORS=me
+  RTM_TPL_PARENT_DIR="$BATS_TMPDIR"
+
+  run rtm-generate --verbose --monochrome base
+
   assert_success
   assert_output --partial "Using (RTM_TEMPLATE_DATA):"
   assert_dir_not_exists "${RTM_TEMPLATE_DATA}"
+  assert_dir_exists "${BATS_TMPDIR}"
 }

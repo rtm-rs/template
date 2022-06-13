@@ -422,13 +422,6 @@ function run_as_root() {
     fi
 }
 
-# DESC: Gather user input for base template
-# ARGS: None
-# OUTS: None
-function gather_input_base(){
-    get_authors
-}
-
 # DESC: Get base project authors
 # ARGS: None
 # OUTS: None
@@ -438,6 +431,22 @@ function get_authors() {
     fi
 }
 
+# DESC: Get parent directory for the project
+# ARGS: None
+# OUTS: None
+function get_parent_dir() {
+    if [[ -z ${RTM_TPL_PARENT_DIR-} ]]; then
+        export RTM_TPL_PARENT_DIR=$(enquirer input --message "Project parent folder?" --default "$(pwd)")
+    fi
+}
+
+# DESC: Gather user input for base template
+# ARGS: None
+# OUTS: None
+function gather_input_base(){
+    get_parent_dir
+    get_authors
+}
 
 # DESC: Usage help
 # ARGS: None

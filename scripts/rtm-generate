@@ -422,6 +422,17 @@ function run_as_root() {
     fi
 }
 
+# DESC: Get base project name
+# ARGS: None
+# OUTS: RTM_TPL_PROJECT_NAME with default $USER.
+function get_project_name() {
+    if [[ -z ${RTM_TPL_PROJECT_NAME-} ]]; then
+        RTM_TPL_PROJECT_NAME="$(enquirer input --message 'Project name?')"
+        export RTM_TPL_PROJECT_NAME
+    fi
+    verbose_print "Project name: ${RTM_TPL_PROJECT_NAME}"
+}
+
 # DESC: Get base project authors
 # ARGS: None
 # OUTS: RTM_TPL_AUTHORS with default $USER.
@@ -601,7 +612,7 @@ function gather_input_base_http(){
 # DESC: Gather user input for base template storage adapter JSON
 # ARGS: None
 # OUTS: None
-function gather_input_base_json(){
+function gather_input_base_json() {
     rm -rf "${RTM_TEMPLATE_DATA}"
     script_exit "Not yet implemented.  Pull requests welcome: https://github.com/rtm-rs/template" 1
 }
@@ -649,8 +660,9 @@ function gather_input_base_yaml(){
 # OUTS: None
 function gather_input_base(){
     get_parent_dir
-    get_source
+    get_project_name
     get_authors
+    get_source
     get_licenses
     get_crate_type
     get_storage_adapters

@@ -17,6 +17,13 @@ setup() {
     [ $RTM_TPL_PARENT_DIR = "$BATS_TMPDIR" ]
 }
 
+@test "Get name from env" {
+    load rtm-generate
+    RTM_TPL_PROJECT_NAME=mtr
+    get_project_name
+    [ "$RTM_TPL_PROJECT_NAME" = 'mtr' ]
+}
+
 @test "Get authors from env" {
     load rtm-generate
     RTM_TPL_AUTHORS=me

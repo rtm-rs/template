@@ -698,7 +698,8 @@ function generate_base() {
         verbose_print "Created (RTM_TEMPLATE_DATA): ${RTM_TEMPLATE_DATA}"
     fi
     verbose_print "Using (RTM_TEMPLATE_DATA): ${RTM_TEMPLATE_DATA}"
-    git clone "${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
+    verbose_print "Using (RTM_TEMPLATE_URL): ${RTM_TEMPLATE_URL}"
+    git clone file://"${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
     gather_input_base
     pushd "${RTM_TEMPLATE_DATA}"
 

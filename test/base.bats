@@ -24,7 +24,10 @@ setup() {
   run rtm-generate --verbose --monochrome base
 
   assert_success
-  assert_output --partial "Using (RTM_TEMPLATE_DATA):"
+
+  refute_output --partial 'warning: You appear to have cloned an empty repository.'
+
+  assert_output --partial 'Using (RTM_TEMPLATE_DATA):'
   assert_dir_not_exists "${RTM_TEMPLATE_DATA}"
   assert_dir_exists "${BATS_TMPDIR}"
   assert_output --partial 'Project authors: me'
@@ -96,7 +99,7 @@ setup() {
   run rtm-generate --verbose --monochrome base
 
   assert_failure
-  assert_output --partial "Using (RTM_TEMPLATE_DATA):"
+  assert_output --partial 'Using (RTM_TEMPLATE_DATA):'
   assert_dir_not_exists "${RTM_TEMPLATE_DATA}"
   assert_dir_exists "${BATS_TMPDIR}"
   assert_output --partial 'Project authors: me'
@@ -160,7 +163,7 @@ setup() {
   run rtm-generate --verbose --monochrome base
 
   assert_failure
-  assert_output --partial "Using (RTM_TEMPLATE_DATA):"
+  assert_output --partial 'Using (RTM_TEMPLATE_DATA):'
   assert_dir_not_exists "${RTM_TEMPLATE_DATA}"
   assert_dir_exists "${BATS_TMPDIR}"
   assert_output --partial 'Project authors: me'
@@ -185,7 +188,7 @@ setup() {
   run rtm-generate --verbose --monochrome base
 
   assert_failure
-  assert_output --partial "Using (RTM_TEMPLATE_DATA):"
+  assert_output --partial 'Using (RTM_TEMPLATE_DATA):'
   assert_dir_not_exists "${RTM_TEMPLATE_DATA}"
   assert_dir_exists "${BATS_TMPDIR}"
   assert_output --partial 'Project authors: me'
@@ -210,7 +213,7 @@ setup() {
   run rtm-generate --verbose --monochrome base
 
   assert_failure
-  assert_output --partial "Using (RTM_TEMPLATE_DATA):"
+  assert_output --partial 'Using (RTM_TEMPLATE_DATA):'
   assert_dir_not_exists "${RTM_TEMPLATE_DATA}"
   assert_dir_exists "${BATS_TMPDIR}"
   assert_output --partial 'Project authors: me'
@@ -235,7 +238,7 @@ setup() {
   run rtm-generate --verbose --monochrome base
 
   assert_failure
-  assert_output --partial "Using (RTM_TEMPLATE_DATA):"
+  assert_output --partial 'Using (RTM_TEMPLATE_DATA):'
   assert_dir_not_exists "${RTM_TEMPLATE_DATA}"
   assert_dir_exists "${BATS_TMPDIR}"
   assert_output --partial 'Project authors: me'

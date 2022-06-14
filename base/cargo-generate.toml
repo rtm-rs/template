@@ -35,17 +35,6 @@ type = "bool"
 prompt = "Use PostgreSQL Event Store for RTM?"
 default = false
 
-[conditional.'sql == true']
-sql-migrations = {type = "string",prompt = "Which SQL migration tool?",choices = ["Refinery", "SeaORM"],default = "Refinery"}
-sql-orm = {type = "string",prompt = "Which SQL ORM tool?",choices = ["SeaORM"],default = "SeaORM"}
-sql-vendor = {type = "string",prompt = "Which SQL vendor?",choices = ["mysql", "postgresql", "sqlite"],default = "sqlite",}
-db-host = {type = "string", prompt = "Database hostname", regex = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"}
-db-name = {type = "string", prompt = "Database name", regex = "^[a-zA-Z_][a-zA-Z0-9_]*$"}
-db-pass = {type = "string", prompt = "Database password - at least eight characters with at least one lower & upper case letter, digit and special character.", regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9])(?=.{8,})$"}
-db-port = {type = "string", prompt = "Database port", regex = "^[0-9]+$"}
-db-schema = {type = "string", prompt = "Database schema", default = "rtm", regex = "^[a-zA-Z_][a-zA-Z0-9_]*$"}
-db-user = {type = "string", prompt = "Database username", regex = "^(?=[a-zA-Z0-9._]{8,20}$)(?!.*[_.]{2})[^_.].*[^_.]$"}
-
 [conditional.'sql-orm == "SeaORM"']
 rename = {entities-seaorm = "entities"}
 async = { type = "string", prompt = "Which async runtime?", choices = [ "actix", "async-std", "tokio", ], default = "async-std",}

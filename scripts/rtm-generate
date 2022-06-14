@@ -480,6 +480,165 @@ function get_storage_adapters() {
     verbose_print "Storage adapters: ${RTM_TPL_STORAGE_ADAPTERS}"
 }
 
+# DESC: Get SQL vendor
+# ARGS: None
+# OUTS: RTM_TPL_SQL_VENDOR or more of `mysql postgres sqlite` with
+#       `sqlite` as default.
+function get_sql_vendor() {
+    if [[ -z ${RTM_TPL_SQL_VENDOR-} ]]; then
+        RTM_TPL_SQL_VENDOR="$(enquirer multi-select --cancel --default --selected 3 --message 'Which SQL vendor?' -- mysql postgres sqlite)"
+        export RTM_TPL_SQL_VENDOR
+    fi
+    verbose_print "SQL vendor: ${RTM_TPL_SQL_VENDOR}"
+}
+
+# DESC: Get SQL Object Relation Mapping (ORM) crate
+# ARGS: None
+# OUTS: RTM_TPL_SQL_ORM or more of `sea-orm diesel` with
+#       `sql` as default.
+function get_sql_orm() {
+    if [[ -z ${RTM_TPL_SQL_ORM-} ]]; then
+        RTM_TPL_SQL_ORM="$(enquirer multi-select --cancel --default --selected 1 --message 'Which SQL Object Relation Mapping crate?' -- sea-orm diesel)"
+        export RTM_TPL_SQL_ORM
+    fi
+    verbose_print "SQL Object Relation Mapping crate: ${RTM_TPL_SQL_ORM}"
+}
+
+# DESC: Get SQL migration tool
+# ARGS: None
+# OUTS: RTM_TPL_SQL_MIGRATION or more of `none refinery sea-orm` with
+#       `refinery` as default.
+function get_sql_migration() {
+    if [[ -z ${RTM_TPL_SQL_MIGRATION-} ]]; then
+        RTM_TPL_SQL_MIGRATION="$(enquirer multi-select --cancel --default --selected 2 --message 'Which SQL migration crate?' -- none refinery sea-orm)"
+        export RTM_TPL_SQL_MIGRATION
+    fi
+    verbose_print "SQL migration crate: ${RTM_TPL_SQL_MIGRATION}"
+}
+
+# DESC: Get SQL vendor DB user name
+# ARGS: None
+# OUTS: RTM_TPL_SQL_DB_USER string for DB user name `$USER` is default.
+function get_sql_db_user() {
+    if [[ -z ${RTM_TPL_SQL_DB_USER-} ]]; then
+        RTM_TPL_SQL_DB_USER="$(enquirer input --default $USER --message 'What is your SQL vendor DB user name?')"
+        export RTM_TPL_SQL_DB_USER
+    fi
+    verbose_print "SQL vendor DB user name: ${RTM_TPL_SQL_DB_USER}"
+}
+
+# DESC: Get SQL vendor DB user password
+# ARGS: None
+# OUTS: RTM_TPL_SQL_DB_PASSWORD string for DB user password.
+function get_sql_db_password() {
+    if [[ -z ${RTM_TPL_SQL_DB_PASSWORD-} ]]; then
+        RTM_TPL_SQL_DB_HOSTRTM_TPL_SQL_DB_PASSWORD="$(enquirer secret --message 'What is your SQL vendor DB user password?' --confirm 'Please confirm:' --error 'The passwords do not match.')"
+        export RTM_TPL_SQL_DB_PASSWORD
+    fi
+    verbose_print "SQL vendor DB user password: ${RTM_TPL_SQL_DB_PASSWORD}"
+}
+
+# DESC: Get SQL vendor DB host IP or FQDN (non-SQLite)
+# ARGS: None
+# OUTS: RTM_TPL_SQL_DB_HOST string for DB IP address or Fully Qualified Domain Name (FQDN).
+function get_sql_db_host() {
+    if [[ -z ${RTM_TPL_SQL_DB_HOST-} ]]; then
+        RTM_TPL_SQL_DB_HOST="$(enquirer input --default 127.0.0.1 --message 'What is the SQL vendor DB host IP or FQDN?')"
+        export RTM_TPL_SQL_DB_HOST
+    fi
+    verbose_print "SQL vendor DB host: ${RTM_TPL_SQL_DB_HOST}"
+}
+
+# DESC: Get SQL vendor DB port number (non-SQLite)
+# ARGS: None
+# OUTS: RTM_TPL_SQL_DB_HOST string for DB port number.
+function get_sql_db_port() {
+    if [[ -z ${RTM_TPL_SQL_DB_PORT-} ]]; then
+        RTM_TPL_SQL_DB_PORT="$(enquirer input --default 5432 --message 'What is the SQL vendor DB port number?')"
+        export RTM_TPL_SQL_DB_PORT
+    fi
+    verbose_print "SQL vendor DB port: ${RTM_TPL_SQL_DB_PORT}"
+}
+
+# DESC: Get SQL vendor DB name (non-SQLite)
+# ARGS: None
+# OUTS: RTM_TPL_SQL_DB_HOST string for DB name.
+function get_sql_db_name() {
+    if [[ -z ${RTM_TPL_SQL_DB_NAME-} ]]; then
+        RTM_TPL_SQL_DB_NAME="$(enquirer input --default 5432 --message 'What is the SQL vendor DB name?')"
+        export RTM_TPL_SQL_DB_NAME
+    fi
+    verbose_print "SQL vendor DB name: ${RTM_TPL_SQL_DB_NAME}"
+}
+
+# DESC: Get SQL vendor DB path (SQLite)
+# ARGS: None
+# OUTS: RTM_TPL_SQL_DB_PATH string for DB path.
+function get_sql_db_path() {
+    if [[ -z ${RTM_TPL_SQL_DB_PATH-} ]]; then
+        RTM_TPL_SQL_DB_PATH="$(enquirer input --default "$(pwd)/main.db" --message 'What is the SQL vendor DB path?')"
+        export RTM_TPL_SQL_DB_PATH
+    fi
+    verbose_print "SQL vendor DB path: ${RTM_TPL_SQL_DB_PATH}"
+}
+
+# DESC: Gather user input for base template storage adapter CSV
+# ARGS: None
+# OUTS: None
+function gather_input_base_csv(){
+    rm -rf "${RTM_TEMPLATE_DATA}"
+    script_exit "Not yet implemented.  Pull requests welcome: https://github.com/rtm-rs/template" 1
+}
+
+# DESC: Gather user input for base template storage adapter HTTP
+# ARGS: None
+# OUTS: None
+function gather_input_base_http(){
+    rm -rf "${RTM_TEMPLATE_DATA}"
+    script_exit "Not yet implemented.  Pull requests welcome: https://github.com/rtm-rs/template" 1
+}
+
+# DESC: Gather user input for base template storage adapter JSON
+# ARGS: None
+# OUTS: None
+function gather_input_base_json(){
+    rm -rf "${RTM_TEMPLATE_DATA}"
+    script_exit "Not yet implemented.  Pull requests welcome: https://github.com/rtm-rs/template" 1
+}
+
+# DESC: Gather user input for base template storage adapter SQL
+# ARGS: None
+# OUTS: None
+function gather_input_base_sql(){
+    get_sql_orm
+    get_sql_migration
+    get_sql_vendor
+    case "${RTM_TPL_SQL_VENDOR}" in
+        mysql | postgres)
+            get_sql_db_user
+            get_sql_db_password
+            get_sql_db_host
+            get_sql_db_port
+            get_sql_db_name
+        ;;
+        sqlite)
+            get_sql_db_path
+        ;;
+        *)
+            rm -rf "${RTM_TEMPLATE_DATA}"
+            script_exit "Unknown SQL vendor in RTM_TPL_SQL_VENDOR: ${RTM_TPL_SQL_VENDOR}" 1
+        ;;
+    esac
+}
+
+# DESC: Gather user input for base template storage adapter YAML
+# ARGS: None
+# OUTS: None
+function gather_input_base_yaml(){
+    rm -rf "${RTM_TEMPLATE_DATA}"
+    script_exit "Not yet implemented.  Pull requests welcome: https://github.com/rtm-rs/template" 1
+}
+
 ## See end of the script for these functions (VSCode issue #77675)
 #
 # get_source
@@ -496,6 +655,25 @@ function gather_input_base(){
     get_crate_type
     get_storage_adapters
     get_tls
+    for adapter in $RTM_TPL_STORAGE_ADAPTERS;
+    do
+        case "$adapter" in
+            csv) gather_input_base_csv
+            ;;
+            http) gather_input_base_http
+            ;;
+            json) gather_input_base_json
+            ;;
+            sql) gather_input_base_sql
+            ;;
+            yaml) gather_input_base_yaml
+            ;;
+            *)
+                rm -rf "${RTM_TEMPLATE_DATA}"
+                script_exit "Unknown storage adapter in RTM_TPL_STORAGE_ADAPTERS: ${RTM_TPL_STORAGE_ADAPTERS}" 1
+            ;;
+        esac
+    done
 }
 
 # DESC: Usage help

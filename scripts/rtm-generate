@@ -764,6 +764,8 @@ function generate_base_files(){
   local rtm_template_base_variables
   rtm_template_base_variables=()
 
+  generate_base_snippets
+
   pushd "${RTM_TEMPLATE_DATA}"
       rtm_template_base_snippets="$(cat snippets.txt)"
       eval $rtm_template_base_snippets
@@ -778,15 +780,17 @@ function generate_base_files(){
         esac
       done
 
-      for line in "${rtm_template_base_variables[@]}"
-      do
-        from=$line
-        to="$( echo "${!from}" )"
-        # Liquid template syntax `{{ ... }}`.
-        # Delimiter i.e. `;` must not exist in snippets.
-        sed -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" "$destination" <<<"$from"
-      done
-
+      find ./base -print0 |
+        while IFS= read -r -d '' destination; do
+            for line in "${rtm_template_base_variables[@]}"
+            do
+              from=$line
+              to="$( echo "${!from}" )"
+              # Liquid template syntax `{{ ... }}`.
+              # Delimiter i.e. `;` must not exist in snippets.
+              sed -i -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" "$destination" <<<"$from"
+            done
+        done
   popd
   rm -rf "${RTM_TEMPLATE_DATA}"
 }
@@ -816,7 +820,6 @@ function generate_base() {
     verbose_print "Using (RTM_TEMPLATE_URL): ${RTM_TEMPLATE_URL}"
     git clone file://"${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
     gather_input_base
-    generate_base_snippets
     generate_base_files
 }
 

@@ -33,26 +33,21 @@ pushd ${clone_repo}
   start_commit=$(git rev-list main|tail -n 1)
   # Checkout the oldest commit; detached HEAD
   git checkout $start_commit
-  # Create a new (temporary) orphaned branch.
+  # Create a (temporary) orphaned branch.
   git checkout --orphan temp_branch
   # Initial commit of truncated history.
   git commit -m 'Template test fixture updated'
-  # Replay other commits on top of initial commit, in order, so rebase master
-  # onto it, except for the oldest commit whose parents don't exist in the
-  # shallow clone... it has been replaced by the 'Template test fixtures updated'
-  # commit
+  # Replay commits on top of initial commit.
   git rebase --onto temp_branch $start_commit main
-  # Push this to the new remote repo... don't push the temp branch, only master,
-  # the beginning of whose commit chain will be our 'Template test fixtures
-  # updated' commit
+  # Push main to the new bare repo...
   git push -u origin main
 popd
+rm -rf ${clone_repo}
 
 ## Swap out the new for old
 #
 rm -rf test/fixtures/template.git
 mv ${bare_repo}.git test/fixtures/template.git
-rm -rf ${clone_repo}
 
 # Even if a *.rs file has changed (above), a redo script that monitors this,
 # will see a change only if there has been a change across results.

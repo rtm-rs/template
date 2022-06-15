@@ -59,8 +59,20 @@ the related data.
 
 - `RTM_TPL_AUTHORS`: The project authors. Default: `$USER`
 - `RTM_TPL_CRATE_TYPE`: The crate type.  Default: `library`
+- `RTM_TPL_LICENSES`: The project license(s).  Default: `apache2 mit`
 - `RTM_TPL_PARENT_DIR`: The project parent directory.  Default: `$(pwd)`
 - `RTM_TPL_PROJECT`: The name of the project.  Default: `mtr`
+- `RTM_TPL_SOURCE`: The .  Default: ``
+- `RTM_TPL_SQL_DB_HOST`: The .  Default: ``
+- `RTM_TPL_SQL_DB_NAME`: The .  Default: ``
+- `RTM_TPL_SQL_DB_PASSWORD`: The .  Default: ``
+- `RTM_TPL_SQL_DB_PORT`: The .  Default: ``
+- `RTM_TPL_SQL_DB_USER`: The .  Default: ``
+- `RTM_TPL_SQL_MIGRATION`: The .  Default: ``
+- `RTM_TPL_SQL_ORM`: The .  Default: ``
+- `RTM_TPL_SQL_VENDOR`: The .  Default: ``
+- `RTM_TPL_STORAGE_ADAPTERS`: The .  Default: ``
+- `RTM_TPL_TLS`: The .  Default: ``
 
 ## Development
 

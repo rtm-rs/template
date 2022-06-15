@@ -741,9 +741,9 @@ function gather_input_base(){
 # OUTS: None
 function output_snippet(){
   local snippet
-  snippet="$1=$2"
-  echo $snippet >>"${RTM_TEMPLATE_DATA}/snippets.txt"
-  verbose_print $snippet
+  snippet="$1=\"$2\""
+  echo "$snippet" >>"${RTM_TEMPLATE_DATA}/snippets.txt"
+  verbose_print "$snippet"
 }
 
 # DESC: Generate code snippets for base template
@@ -751,9 +751,13 @@ function output_snippet(){
 # OUTS: None
 function generate_base_snippets(){
   lhs=rtm_tpl_base_cargo_lib
-  rhs='"a
-b"'
-  output_snippet $lhs $rhs
+  rhs="\
+This is line 1.
+This is line 2.
+Line 3.
+"
+
+  output_snippet $lhs "$rhs"
 }
 
 # DESC: Generate files for base template
@@ -761,38 +765,44 @@ b"'
 # OUTS: None
 function generate_base_files(){
   local rtm_template_base_snippets
-  local rtm_template_base_variables
-  rtm_template_base_variables=()
+  declare -a rtm_template_base_variables
 
   generate_base_snippets
 
   pushd "${RTM_TEMPLATE_DATA}"
       rtm_template_base_snippets="$(cat snippets.txt)"
-      eval $rtm_template_base_snippets
+      eval "export $rtm_template_base_snippets"
       # This is not great.
-      env -0 | while IFS== read -d '' -r var value; do
+      # Do not pipe to while as variables are lost in the pipe subshell.
+      while IFS== read -d '' -r var value; do
         case "$var" in
-          rtm_tpl_base_* ) echo "$var"
-            rtm_template_base_variables+=("$var")
+          rtm_tpl_base_* )
+            echo "$var"
+            rtm_template_base_variables=("${rtm_template_base_variables[@]}" "$var")
+            echo "${rtm_template_base_variables[@]}"
           ;;
           * )
           ;;
         esac
-      done
+      done < <(env -0)
 
-      find ./base -print0 |
-        while IFS= read -r -d '' destination; do
-            for line in "${rtm_template_base_variables[@]}"
-            do
-              from=$line
-              to="$( echo "${!from}" )"
-              # Liquid template syntax `{{ ... }}`.
-              # Delimiter i.e. `;` must not exist in snippets.
-              sed -i -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" "$destination" <<<"$from"
-            done
+      verbose_print "rtm_template_base_variables:"
+      verbose_print "${rtm_template_base_variables[@]}"
+
+      # Do not pipe to while as variables are lost in the pipe subshell.
+      while IFS= read -r -d '' destination; do
+        verbose_print "Processing: ${destination}"
+        for line in "${rtm_template_base_variables[@]}"
+        do
+          from=$line
+          to="$( echo "${!from}" )"
+          # Liquid template syntax `{{ ... }}`.
+          # Delimiter i.e. `;` must not exist in snippets.
+          sed -i -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" "$destination" <<<"$from"
         done
+      done < <(find ./base -type file -print0)
   popd
-  rm -rf "${RTM_TEMPLATE_DATA}"
+  #rm -rf "${RTM_TEMPLATE_DATA}"
 }
 
 # DESC: Usage help
@@ -818,7 +828,7 @@ function generate_base() {
     fi
     verbose_print "Using (RTM_TEMPLATE_DATA): ${RTM_TEMPLATE_DATA}"
     verbose_print "Using (RTM_TEMPLATE_URL): ${RTM_TEMPLATE_URL}"
-    git clone file://"${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
+    git clone "${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
     gather_input_base
     generate_base_files
 }
@@ -870,6 +880,8 @@ function parse_params() {
                 quiet=true
                 ;;
             base)
+                cron_init
+                colour_init
                 generate_base
                 ;;
             *)
@@ -888,8 +900,6 @@ function main() {
 
     script_init "$@"
     parse_params "$@"
-    cron_init
-    colour_init
     #lock_init system
 }
 

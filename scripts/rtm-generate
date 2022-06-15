@@ -306,7 +306,7 @@ function pretty_print() {
 # ARGS: $@ (required): Passed through to pretty_print() function
 # OUTS: None
 function verbose_print() {
-    if [[ -n ${verbose-} ]]; then
+    if [[ -n ${verbose-} || ${RTM_TPL_VERBOSE-} =~ ^1|yes|true$ ]]; then
         pretty_print "$@"
     fi
 }
@@ -420,6 +420,53 @@ function run_as_root() {
     else
         script_exit "Unable to run requested command as root: $*" 1
     fi
+}
+
+# DESC: Escape / for use in the substitution string of a `s///` call
+#       Handles multi-line input correctly.
+#
+#       Because sed reads a single line at at time by default, use of
+#       quoteRe() with multi-line strings only makes sense in sed commands
+#       that explicitly read multiple (or all) lines at once.
+#
+#       Using command substitutions ($(...)) to call the function
+#       won't work for strings that have trailing newlines; in that event,
+#       use something like IFS= read -d '' -r escapedValue <(quoteSubst "$value")
+#
+# ARGS: None
+# OUTS: None
+# NOTE: https://stackoverflow.com/a/29613573/152860
+# EXAMPLE:
+#
+#       from=$'Cost\(*):\n$3.'               # sample input containing metachars.
+#       to='You & I'$'\n''eating A\1 sauce.' # sample replacement string with metachars.
+#
+#       # Should print the unmodified value of $to
+#       sed -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" <<<"$from"
+function quote_substitution(){
+  IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"$1")
+  printf %s "${REPLY%$'\n'}"
+}
+
+# DESC: Escape / for use in the regular expression string of a `s///` call
+#       Handles multi-line input correctly.
+#
+#       Because sed reads a single line at at time by default, use of
+#       quote_regex() with multi-line strings only makes sense in sed commands
+#       that explicitly read multiple (or all) lines at once.
+#
+# ARGS: None
+# OUTS: None
+# NOTE: https://stackoverflow.com/a/29613573/152860
+# EXAMPLE:
+#
+#       from=$'Cost\(*):\n$3.'               # sample input containing metachars.
+#       to='You & I'$'\n''eating A\1 sauce.' # sample replacement string with metachars.
+#
+#       # Should print the unmodified value of $to
+#       sed -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" <<<"$from"
+function quote_regex(){
+  sed -e 's/[^^]/[&]/g; s/\^/\\^/g; $!a\'$'\n''\\n' <<<"$1" | tr -d '\n';
 }
 
 # DESC: Get base project name
@@ -688,6 +735,62 @@ function gather_input_base(){
     done
 }
 
+# DESC: Output code snippet
+# ARGS: $1
+#       $2
+# OUTS: None
+function output_snippet(){
+  local snippet
+  snippet="$1=$2"
+  echo $snippet >>"${RTM_TEMPLATE_DATA}/snippets.txt"
+  verbose_print $snippet
+}
+
+# DESC: Generate code snippets for base template
+# ARGS: None
+# OUTS: None
+function generate_base_snippets(){
+  lhs=rtm_tpl_base_cargo_lib
+  rhs='"a
+b"'
+  output_snippet $lhs $rhs
+}
+
+# DESC: Generate files for base template
+# ARGS: None
+# OUTS: None
+function generate_base_files(){
+  local rtm_template_base_snippets
+  local rtm_template_base_variables
+  rtm_template_base_variables=()
+
+  pushd "${RTM_TEMPLATE_DATA}"
+      rtm_template_base_snippets="$(cat snippets.txt)"
+      eval $rtm_template_base_snippets
+      # This is not great.
+      env -0 | while IFS== read -d '' -r var value; do
+        case "$var" in
+          rtm_tpl_base_* ) echo "$var"
+            rtm_template_base_variables+=("$var")
+          ;;
+          * )
+          ;;
+        esac
+      done
+
+      for line in "${rtm_template_base_variables[@]}"
+      do
+        from=$line
+        to="$( echo "${!from}" )"
+        # Liquid template syntax `{{ ... }}`.
+        # Delimiter i.e. `;` must not exist in snippets.
+        sed -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" "$destination" <<<"$from"
+      done
+
+  popd
+  rm -rf "${RTM_TEMPLATE_DATA}"
+}
+
 # DESC: Usage help
 # ARGS: None
 # OUTS: None
@@ -713,10 +816,8 @@ function generate_base() {
     verbose_print "Using (RTM_TEMPLATE_URL): ${RTM_TEMPLATE_URL}"
     git clone file://"${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
     gather_input_base
-    pushd "${RTM_TEMPLATE_DATA}"
-
-    popd
-    rm -rf "${RTM_TEMPLATE_DATA}"
+    generate_base_snippets
+    generate_base_files
 }
 
 # DESC: Check requirements once only

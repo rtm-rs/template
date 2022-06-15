@@ -44,6 +44,8 @@ criterion = { version = "0.3", features = ["html_reports"] }
 [features]
 default = []
 
+{{ rtm_tpl_base_cargo_lib }}
+
 {% if crate-lib %}
 [[lib]]
 path = "src/lib.rs"

@@ -1,0 +1,4 @@
+_rtb_cargo_lib="[[lib]]
+path = \"src/lib.rs\"
+name = \"${RTM_TPL_PROJECT_NAME}\"
+"

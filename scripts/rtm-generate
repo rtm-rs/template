@@ -435,7 +435,8 @@ function run_as_root() {
 #
 # ARGS: None
 # OUTS: None
-# NOTE: https://stackoverflow.com/a/29613573/152860
+# NOTE: https://stackoverflow.com/a/29613573
+#       https://stackoverflow.com/a/61332963
 # EXAMPLE:
 #
 #       from=$'Cost\(*):\n$3.'               # sample input containing metachars.
@@ -444,9 +445,23 @@ function run_as_root() {
 #       # Should print the unmodified value of $to
 #       sed -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" <<<"$from"
 function quote_substitution(){
-  IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"$1")
+  # set +o errexit
+  # set +o pipefail
+  # if sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"$1"
+  # then
+  #     flat="$(sed -z 's/\n/\\n/g' <<<"$1")"
+  #     clean=$(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"${flat}")
+  # else
+  #     clean="$(sed -z 's/\n/\\n/g' <<<"$1")"
+  # fi
+  IFS= read -d '' -r < <(sed -e ':a' -e '$!{N;ba' -e '}' -e 's/[&/\]/\\&/g; s/\n/\\&/g' <<<"$1") || true
   printf %s "${REPLY%$'\n'}"
+  # set -o errexit
+  # set -o pipefail
 }
+
+# Replace '\n' with newline using bash
+#https://stackoverflow.com/a/52065116/152860
 
 # DESC: Escape / for use in the regular expression string of a `s///` call
 #       Handles multi-line input correctly.
@@ -520,7 +535,7 @@ function get_crate_type() {
 #       `mit apache2` as default.
 function get_licenses() {
     if [[ -z ${RTM_TPL_LICENSES-} ]]; then
-        RTM_TPL_LICENSES="$(enquirer multi-select --cancel --default --selected 1 2 --message 'Which licenses for this project?' -- mit apache2)"
+        RTM_TPL_LICENSES="$(enquirer multi-select --cancel --default --selected 1 --message 'Which licenses for this project?' -- mit apache2)"
         export RTM_TPL_LICENSES
     fi
     verbose_print "Licenses: ${RTM_TPL_LICENSES}"
@@ -735,31 +750,6 @@ function gather_input_base(){
     done
 }
 
-# DESC: Output code snippet
-# ARGS: $1
-#       $2
-# OUTS: None
-function output_snippet(){
-  local snippet
-  snippet="$1=\"$2\""
-  echo "$snippet" >>"${RTM_TEMPLATE_DATA}/snippets.txt"
-  verbose_print "$snippet"
-}
-
-# DESC: Generate code snippets for base template
-# ARGS: None
-# OUTS: None
-function generate_base_snippets(){
-  lhs=rtm_tpl_base_cargo_lib
-  rhs="\
-This is line 1.
-This is line 2.
-Line 3.
-"
-
-  output_snippet $lhs "$rhs"
-}
-
 # DESC: Generate files for base template
 # ARGS: None
 # OUTS: None
@@ -767,19 +757,15 @@ function generate_base_files(){
   local rtm_template_base_snippets
   declare -a rtm_template_base_variables
 
-  generate_base_snippets
-
   pushd "${RTM_TEMPLATE_DATA}"
-      rtm_template_base_snippets="$(cat snippets.txt)"
+      rtm_template_base_snippets="$(cat base_snippets.txt)"
       eval "export $rtm_template_base_snippets"
       # This is not great.
       # Do not pipe to while as variables are lost in the pipe subshell.
       while IFS== read -d '' -r var value; do
         case "$var" in
-          rtm_tpl_base_* )
-            echo "$var"
+          _rtb_* )
             rtm_template_base_variables=("${rtm_template_base_variables[@]}" "$var")
-            echo "${rtm_template_base_variables[@]}"
           ;;
           * )
           ;;
@@ -797,10 +783,9 @@ function generate_base_files(){
           from=$line
           to="$( echo "${!from}" )"
           # Liquid template syntax `{{ ... }}`.
-          # Delimiter i.e. `;` must not exist in snippets.
-          sed -i -e ':a' -e '$!{N;ba' -e '}' -e "s/$(quote_regex "$from")/$(quote_substitution "$to")/" "$destination" <<<"$from"
+          sed -i -e ':a' -e '$!{N;ba' -e '}' -e "s/{{ $(quote_regex "$from") }}/$(quote_substitution "$to")/" "$destination" <<<"$from"
         done
-      done < <(find ./base -type file -print0)
+      done < <(find ./base -type f -print0)
   popd
   #rm -rf "${RTM_TEMPLATE_DATA}"
 }

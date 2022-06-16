@@ -12,13 +12,6 @@ readonly SUBREPO=template
 find . -type f -name '*.rs' -print0 | xargs --null redo-ifchange
 find . -type f -name '*.toml' -print0 | xargs --null redo-ifchange
 
-pushd ./..
-  git subrepo clean ${SUBREPO}
-  git subrepo pull ${SUBREPO}
-  # ingydotnet/git-subrepo/issues/530
-  git subrepo push ${SUBREPO} --force
-popd
-
 # The remote commit hash we have in the subrepo.
 subrepo_commit="$(echo $(git log|grep merged|head -n 1|cut -d : -f 2))"
 subrepo_commit="$(echo ${subrepo_commit//\"})"
@@ -70,5 +63,12 @@ rm -rf test/fixtures/template.git
 mv ${bare_repo}.git test/fixtures/template.git
 git add .
 git commit -a -m 'Template test fixture updated' || true
+
+pushd ./..
+  git subrepo clean ${SUBREPO}
+  git subrepo pull ${SUBREPO}
+  # ingydotnet/git-subrepo/issues/530
+  git subrepo push ${SUBREPO} --force
+popd
 
 _redo_stamp

@@ -31,7 +31,6 @@ pushd ${clone_repo}
   git clean -dfx
   git remote remove upstream
   git branch -m master main
-  git branch -u origin/main main
   # Store the hash of the oldest commit (ie. in this case, the 50th) in a var
   start_commit=$(git rev-list main|tail -n 1)
   # Checkout the oldest commit; detached HEAD

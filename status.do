@@ -22,8 +22,11 @@ clone_repo=$(mktemp --directory)
 git init --bare ${bare_repo}.git
 git clone file://${bare_repo}.git ${clone_repo}
 pushd ${clone_repo}
+  git config advice.setUpstreamFailure false
   git config user.email "begleybrothers@gmail.com"
-  git config user.name "Begley Brothers Ltd"
+  git config user.name "Begley Brothers Inc"
+  git branch -m master main
+  git branch -u origin/main main
   git remote add upstream https://github.com/rtm-rs/template.git
   git fetch --depth=1 upstream
   git reset --hard upstream/main

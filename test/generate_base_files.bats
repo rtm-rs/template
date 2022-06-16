@@ -7,6 +7,8 @@ setup() {
     load rtm-generate
     RTM_TPL_VERBOSE=true
 
+    git clone -b main "${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
+
     run generate_base_files
 
     assert_success

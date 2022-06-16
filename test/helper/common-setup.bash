@@ -5,6 +5,8 @@ _common_setup() {
     load 'helper/bats-assert/load'
     load 'helper/bats-file/load'
 
+    _setup_rtm_env
+
     if [[ -z ${XDG_STATE_HOME-} ]]; then
         export XDG_STATE_HOME="$HOME/.local/state"
     fi
@@ -21,8 +23,21 @@ _common_setup() {
     PATH="$PROJECT_ROOT/scripts:$PATH"
 }
 
-# $BATS_RUN_TMPDIR $BATS_TEST_TMPDIR $BATS_SUITE_TMPDIR
-# $ git init --bare ~/repos/myproject.git
-# $ cd /path/to/existing/repo
-# $ git remote add origin ~/repos/myproject.git
-# $ git push origin master
+_setup_rtm_env() {
+  export RTM_TPL_AUTHORS=me
+  export RTM_TPL_PROJECT_NAME=mtr
+  export RTM_TPL_CRATE_TYPE='binary library'
+  export RTM_TPL_LICENSES='mit'
+  export RTM_TPL_PARENT_DIR="$BATS_TMPDIR"
+  export RTM_TPL_SOURCE='github.com'
+  export RTM_TPL_STORAGE_ADAPTERS='sql'
+  export RTM_TPL_TLS='rustls'
+  export RTM_TPL_SQL_ORM='diesel'
+  export RTM_TPL_SQL_MIGRATION='sea-orm'
+  export RTM_TPL_SQL_VENDOR='postgres'
+  export RTM_TPL_SQL_DB_USER='me'
+  export RTM_TPL_SQL_DB_PASSWORD='sekr3t'
+  export RTM_TPL_SQL_DB_HOST='localhost'
+  export RTM_TPL_SQL_DB_PORT='5432'
+  export RTM_TPL_SQL_DB_NAME='mtr'
+}

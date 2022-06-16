@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -e
 
+function _redo_stamp () {
+  # Even if a *.rs file has changed (above), a redo script that monitors this,
+  # will see a change only if there has been a change across results.
+  cat benches/status examples/status src/status tests/status | redo-stamp
+}
+
 readonly SUBREPO=template
 
 find . -type f -name '*.rs' -print0 | xargs --null redo-ifchange
@@ -12,6 +18,10 @@ pushd ./..
   # ingydotnet/git-subrepo/issues/530
   git subrepo push ${SUBREPO} --force
 popd
+
+# The remote commit hash we have in the subrepo.
+subrepo_commit="$(echo $(git log|grep merged|head -n 1|cut -d : -f 2))"
+subrepo_commit="$(echo ${subrepo_commit//\"})"
 
 ## Sync template test fixture with latest remote
 #
@@ -33,6 +43,13 @@ pushd ${clone_repo}
   git remote remove upstream
   # Store the hash of the oldest commit (ie. in this case, the 50th) in a var
   start_commit=$(git rev-list main|tail -n 1)
+  # Test if already uptodate
+  if [[ "${start_commit:1:7}" == "${subrepo_commit}" ]]
+  then
+    popd
+    _redo_stamp
+    exit 0
+  fi
   # Checkout the oldest commit; detached HEAD
   git checkout $start_commit
   # Create a (temporary) orphaned branch.
@@ -54,6 +71,4 @@ mv ${bare_repo}.git test/fixtures/template.git
 git add .
 git commit -a -m 'Template test fixture updated' || true
 
-# Even if a *.rs file has changed (above), a redo script that monitors this,
-# will see a change only if there has been a change across results.
-cat benches/status examples/status src/status tests/status | redo-stamp
+_redo_stamp

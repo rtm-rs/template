@@ -38,7 +38,7 @@ pushd ${clone_repo}
   # Create a (temporary) orphaned branch.
   git checkout --orphan temp_branch
   # Initial commit of truncated history.
-  git commit -m 'Template test fixture updated'
+  git commit -a -m 'Template test fixture updated'
   # Replay commits on top of initial commit.
   git rebase --onto temp_branch $start_commit main
   # Push main to the new bare repo...

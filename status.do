@@ -20,7 +20,7 @@ popd
 bare_repo=$(mktemp --directory)
 clone_repo=$(mktemp --directory)
 git init --bare ${bare_repo}.git
-git clone file://${bare_repo}.git ${clone_repo}
+git clone -b main file://${bare_repo}.git ${clone_repo}
 pushd ${clone_repo}
   git config advice.setUpstreamFailure false
   git config user.email "begleybrothers@gmail.com"

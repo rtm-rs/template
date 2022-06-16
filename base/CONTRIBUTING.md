@@ -1,6 +1,6 @@
 # Contribution guidelines
 
-First off, thank you for considering contributing to {{project-name}}.
+First off, thank you for considering contributing to {{ _rtb_project_name }}.
 
 If your contribution is not straightforward, please first discuss the change you
 wish to make by creating a new issue before making the change.
@@ -8,7 +8,7 @@ wish to make by creating a new issue before making the change.
 ## Reporting issues
 
 Before reporting an issue on the
-[issue tracker](https://github.com/{{gh-username}}/{{project-name}}/issues),
+[issue tracker](https://github.com/{{gh-username}}/{{ _rtb_project_name }}/issues),
 please check that it has not already been reported by searching for some related
 keywords.
 
@@ -19,7 +19,7 @@ Try to do one pull request per change.
 ### Updating the changelog
 
 Update the changes you have made in
-[CHANGELOG](https://github.com/{{gh-username}}/{{project-name}}/blob/main/CHANGELOG.md)
+[CHANGELOG](https://github.com/{{gh-username}}/{{ _rtb_project_name }}/blob/main/CHANGELOG.md)
 file under the **Unreleased** section.
 
 Add the changes of your pull request to one of the following subsections,
@@ -42,14 +42,21 @@ If the required subsection does not exist yet under **Unreleased**, create it!
 This is no different than other Rust projects.
 
 ```shell
-git clone https://github.com/{{gh-username}}/{{project-name}}
-cd {{project-name}}
+git clone https://github.com/{{gh-username}}/{{ _rtb_project_name }}
+cd {{ _rtb_project_name }}
 cargo test
 ```
 
 ### Useful Commands
 {% if crate_type == "bin" %}
-- Build and run release version:
+- Build and run binary release version:
+
+  ```shell
+  cargo build --release && cargo run --release
+  ```
+{% endif %}
+{% if crate_type == "lib" %}
+- Build library release version:
 
   ```shell
   cargo build --release && cargo run --release

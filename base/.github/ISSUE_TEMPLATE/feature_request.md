@@ -1,6 +1,6 @@
 ---
 name: Feature request
-about: Suggest an idea for {{project-name}}
+about: Suggest an idea for {{ _rtb_project_name }}
 title: ''
 labels: enhancement
 assignees: ''

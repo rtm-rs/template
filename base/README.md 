@@ -1,9 +1,9 @@
-# {{project-name}}
+# {{ _rtb_project_name }}
 
-[![Crates.io](https://img.shields.io/crates/v/{{project-name}}.svg)](https://crates.io/crates/{{project-name}})
-[![Docs.rs](https://docs.rs/{{project-name}}/badge.svg)](https://docs.rs/{{project-name}})
-[![CI](https://github.com/{{gh-username}}/{{project-name}}/workflows/CI/badge.svg)](https://github.com/{{gh-username}}/{{project-name}}/actions)
-[![Coverage Status](https://coveralls.io/repos/github/{{gh-username}}/{{project-name}}/badge.svg?branch=main)](https://coveralls.io/github/{{gh-username}}/{{project-name}}?branch=main)
+[![Crates.io](https://img.shields.io/crates/v/{{ _rtb_project_name }}.svg)](https://crates.io/crates/{{ _rtb_project_name }})
+[![Docs.rs](https://docs.rs/{{ _rtb_project_name }}/badge.svg)](https://docs.rs/{{ _rtb_project_name }})
+[![CI](https://github.com/{{gh-username}}/{{ _rtb_project_name }}/workflows/CI/badge.svg)](https://github.com/{{gh-username}}/{{ _rtb_project_name }}/actions)
+[![Coverage Status](https://coveralls.io/repos/github/{{gh-username}}/{{ _rtb_project_name }}/badge.svg?branch=main)](https://coveralls.io/github/{{gh-username}}/{{ _rtb_project_name }}?branch=main)
 
 ## Installation
 
@@ -11,7 +11,7 @@
 
 * Install the rust toolchain in order to have cargo installed by following
   [this](https://www.rust-lang.org/tools/install) guide.
-* run `cargo install {{project-name}}`
+* run `cargo install {{ _rtb_project_name }}`
 
 ## License
 

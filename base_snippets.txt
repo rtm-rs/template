@@ -1,4 +1,12 @@
+_rtb_project_name=${RTM_TPL_PROJECT_NAME}
+
+_rtb_authors=${RTM_TPL_AUTHORS}
+
 _rtb_cargo_lib="[[lib]]
 path = \"src/lib.rs\"
 name = \"${RTM_TPL_PROJECT_NAME}\"
+"
+
+_rtb_ignore_lib="
+Cargo.lock
 "

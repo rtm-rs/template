@@ -2,6 +2,4 @@
 /target
 .cargo-ok
 .DS_Store
-{% if crate-lib %}
-Cargo.lock
-{% endif %}
+{{ _rtb_ignore_lib }}

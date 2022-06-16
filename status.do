@@ -51,10 +51,8 @@ rm -rf ${clone_repo}
 #
 rm -rf test/fixtures/template.git
 mv ${bare_repo}.git test/fixtures/template.git
-pushd test/fixtures/template.git
-  git add .
-  git commit -a -m 'Template test fixture updated' || true
-popd
+git add .
+git commit -a -m 'Template test fixture updated' || true
 
 # Even if a *.rs file has changed (above), a redo script that monitors this,
 # will see a change only if there has been a change across results.

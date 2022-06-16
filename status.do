@@ -47,7 +47,7 @@ pushd ${clone_repo}
 popd
 rm -rf ${clone_repo}
 git add .
-git commit -a -m 'Template test fixture updated'
+git commit -a -m 'Template test fixture updated' || true
 
 ## Swap out the new for old
 #

@@ -822,7 +822,7 @@ function generate_base() {
     fi
     verbose_print "Using (RTM_TEMPLATE_DATA): ${RTM_TEMPLATE_DATA}"
     verbose_print "Using (RTM_TEMPLATE_URL): ${RTM_TEMPLATE_URL}"
-    git clone -b main "${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
+    git clone --depth 1 -b main "${RTM_TEMPLATE_URL}" "${RTM_TEMPLATE_DATA}"
     gather_input_base
     generate_base_files
 }

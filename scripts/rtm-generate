@@ -687,14 +687,14 @@ function gather_input_base_sql(){
     get_sql_migration
     get_sql_vendor
     case "${RTM_TPL_SQL_VENDOR}" in
-        mysql | postgres)
+        mysql | postgres )
             get_sql_db_user
             get_sql_db_password
             get_sql_db_host
             get_sql_db_port
             get_sql_db_name
         ;;
-        sqlite)
+        sqlite )
             get_sql_db_path
         ;;
         *)
@@ -732,17 +732,17 @@ function gather_input_base(){
     for adapter in $RTM_TPL_STORAGE_ADAPTERS;
     do
         case "$adapter" in
-            csv) gather_input_base_csv
+            csv ) gather_input_base_csv
             ;;
-            http) gather_input_base_http
+            http ) gather_input_base_http
             ;;
-            json) gather_input_base_json
+            json ) gather_input_base_json
             ;;
-            sql) gather_input_base_sql
+            sql ) gather_input_base_sql
             ;;
-            yaml) gather_input_base_yaml
+            yaml ) gather_input_base_yaml
             ;;
-            *)
+            * )
                 rm -rf "${RTM_TEMPLATE_DATA}"
                 script_exit "Unknown storage adapter in RTM_TPL_STORAGE_ADAPTERS: ${RTM_TPL_STORAGE_ADAPTERS}" 1
             ;;
@@ -758,7 +758,7 @@ function generate_base_files(){
   declare -a rtm_template_base_variables
 
   pushd "${RTM_TEMPLATE_DATA}"
-      rtm_template_base_snippets="$(cat base_snippets.txt)"
+      rtm_template_base_snippets="$(sed '/^$/d' base_snippets.txt)"
       eval "export $rtm_template_base_snippets"
       # This is not great.
       # Do not pipe to while as variables are lost in the pipe subshell.
@@ -787,7 +787,9 @@ function generate_base_files(){
         done
       done < <(find ./base -type f -print0)
   popd
-  #rm -rf "${RTM_TEMPLATE_DATA}"
+  mkdir --parents "${RTM_TPL_PARENT_DIR}"
+  mv --force "${RTM_TEMPLATE_DATA}/base" "${RTM_TPL_PARENT_DIR}/${RTM_TPL_PROJECT_NAME}"
+  rm -rf "${RTM_TEMPLATE_DATA}"
 }
 
 # DESC: Usage help
@@ -796,10 +798,17 @@ function generate_base_files(){
 function script_usage() {
     cat << EOF
 Usage:
-     -h|--help          Display this help
-     -m|--monochrome    Disable colour output
-     -q|--quiet         Run silently unless an error occurs
-     -v|--verbose       Display verbose output
+    rt-generate [OPTIONS] <SUBCOMMAND>
+
+OPTIONS:
+    -h|--help          Display this help
+    -m|--monochrome    Disable colour output
+    -q|--quiet         Run silently unless an error occurs
+    -v|--verbose       Display verbose output
+
+SUBCOMMAND:
+    base      New project using the base template
+    domain    New feature/domain within a project
 EOF
 }
 

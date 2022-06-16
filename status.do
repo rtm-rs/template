@@ -25,13 +25,13 @@ pushd ${clone_repo}
   git config advice.setUpstreamFailure false
   git config user.email "begleybrothers@gmail.com"
   git config user.name "Begley Brothers Inc"
-  git branch -m master main
-  git branch -u origin/main main
   git remote add upstream https://github.com/rtm-rs/template.git
   git fetch --depth=1 upstream
   git reset --hard upstream/main
   git clean -dfx
   git remote remove upstream
+  git branch -m master main
+  git branch -u origin/main main
   # Store the hash of the oldest commit (ie. in this case, the 50th) in a var
   start_commit=$(git rev-list main|tail -n 1)
   # Checkout the oldest commit; detached HEAD

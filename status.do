@@ -19,7 +19,7 @@ popd
 #
 bare_repo=$(mktemp --directory)
 clone_repo=$(mktemp --directory)
-git init --bare ${bare_repo}.git
+git init --bare --initial-branch=main ${bare_repo}.git
 git clone file://${bare_repo}.git ${clone_repo}
 pushd ${clone_repo}
   git config advice.setUpstreamFailure false
@@ -31,7 +31,6 @@ pushd ${clone_repo}
   git reset --hard upstream/main
   git clean -dfx
   git remote remove upstream
-  git branch -m master main
   # Store the hash of the oldest commit (ie. in this case, the 50th) in a var
   start_commit=$(git rev-list main|tail -n 1)
   # Checkout the oldest commit; detached HEAD

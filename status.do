@@ -23,6 +23,7 @@ git init --bare ${bare_repo}.git
 git clone file://${bare_repo}.git ${clone_repo}
 pushd ${clone_repo}
   git config advice.setUpstreamFailure false
+  git config advice.detachedHead false
   git config user.email "begleybrothers@gmail.com"
   git config user.name "Begley Brothers Inc"
   git remote add upstream https://github.com/rtm-rs/template.git
